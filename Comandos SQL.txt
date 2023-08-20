@@ -1,0 +1,82 @@
+# crea la vista Trading
+CREATE STREAM Trading (Senhal STRING, precio DOUBLE, volumen DOUBLE, fecha STRING)
+  WITH (kafka_topic='stock-trading', value_format='json', partitions=1);
+
+
+
+1. ¿Cuál fue el promedio ponderado de precio de una unidad por cada uno de los símbolos procesados? (e.j. AAPL)
+
+
+CREATE TABLE Promedio_Senhal AS
+	SELECT  Senhal, avg(Precio) AS Precio_Prom 
+	FROM Trading 
+	GROUP BY Senhal
+	EMIT CHANGES;
+
+
+ select * from promedio_senhal emit changes;
++------------------------------------------+------------------------------------------+  
+|SENHAL                                    |PRECIO_PROM                               |  
++------------------------------------------+------------------------------------------+  
+|BINANCE:BTCUSDT                           |26072.29251797424                         |  
+
+
+
+
+
+
+2.¿Cuántas transacciones se procesaron por símbolo?
+
+
+CREATE TABLE Cantidad_Senhal AS
+	SELECT Senhal, count(Senhal) AS Cantidad_Senhales 
+	FROM Trading 
+	GROUP BY Senhal
+	EMIT CHANGES;
+
+select * from cantidad_senhal emit changes;
++------------------------------------------+------------------------------------------+  
+|SENHAL                                    |CANTIDAD_SENHALES                         |  
++------------------------------------------+------------------------------------------+  
+|BINANCE:BTCUSDT                           |6908                                      |
+
+
+
+
+
+
+3. ¿Cuál fue el máximo precio registrado por símbolo?
+
+
+CREATE TABLE Precio_Senhal_Max AS
+	SELECT Senhal, max(Precio) AS Precio_Maximo 
+	FROM Trading 
+	GROUP BY Senhal
+	EMIT CHANGES;
+
+select * from precio_senhal_max emit changes;
++------------------------------------------+------------------------------------------+  
+|SENHAL                                    |PRECIO_MAXIMO                             |  
++------------------------------------------+------------------------------------------+  
+|BINANCE:BTCUSDT                           |26111.36                                  | 
+
+
+
+
+
+
+4. ¿Cuál fue el mínimo precio registrado por símbolo?
+
+
+CREATE TABLE Precio_Senhal_Min AS
+	SELECT Senhal, min(Precio) AS Precio_Minimo 
+	FROM Trading 
+	GROUP BY Senhal
+	EMIT CHANGES;
+
+select * from precio_senhal_min emit changes;
++------------------------------------------+------------------------------------------+  
+|SENHAL                                    |PRECIO_MINIMO                             |  
++------------------------------------------+------------------------------------------+  
+|BINANCE:BTCUSDT                           |26052.5                                   |  
+
